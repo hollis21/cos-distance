@@ -6,9 +6,9 @@
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
-    <SpaRoot>ClientApp\</SpaRoot>
+    <SpaRoot>frontend\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
-    <SpaProxyServerUrl>https://localhost:44440</SpaProxyServerUrl>
+    <SpaProxyServerUrl>http://localhost:3000</SpaProxyServerUrl>
     <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
     <RootNamespace>cos_distance</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
