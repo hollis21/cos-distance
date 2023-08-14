@@ -1,0 +1,7 @@
+PoI1,PoI2,Distance,BiDirectional
+GatesOfBarovia,VillageOfBarovia,14,true
+VillageOfBarovia,IvlisCrossroads,13,true
+IvlisCrossroads,TserPoolEncampment,7,true
+TserPoolEncampment,TserFallsBase,5,true
+IvlisCrossroads,TserFalls,23,true
+TserFalls,GatesOfBarovia2,8,true

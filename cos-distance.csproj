@@ -15,7 +15,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="30.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="7.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data\poidata.csv" />
+    <EmbeddedResource Include="Data\poiedgedata.csv" />
   </ItemGroup>
 
   <ItemGroup>
