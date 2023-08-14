@@ -1,4 +1,4 @@
-namespace cos_distance;
+namespace cos_distance.Models;
 
 public class WeatherForecast
 {

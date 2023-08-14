@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using cos_distance.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace cos_distance.Controllers;
 
