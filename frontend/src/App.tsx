@@ -1,5 +1,11 @@
 import React from 'react';
 import './App.css';
+import { PoIService } from './services/poi.service';
+import { PrimaryButton } from '@fluentui/react';
+
+async function RetrieveData() {
+  console.log(await (new PoIService().getPoIs()));
+}
 
 function App() {
   return (
@@ -16,6 +22,11 @@ function App() {
         >
           Learn React
         </a>
+        <PrimaryButton
+          onClick={() => RetrieveData()}
+        >
+          Click Me
+        </PrimaryButton>
       </header>
     </div>
   );
