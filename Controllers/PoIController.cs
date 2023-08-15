@@ -17,6 +17,7 @@ public class PoIController : ControllerBase
         this.poIService = poIService ?? throw new ArgumentNullException(nameof(poIService));
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<PoI>>> Get() {
         return Ok(await this.poIService.GetPoIs());
     }
