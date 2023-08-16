@@ -1,12 +1,27 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
-import { PoIService } from './services/poi.service';
-import { ComboBox, MessageBar, MessageBarType, Spinner } from '@fluentui/react';
+import { IPoI, PoIService } from './services/poi.service';
+import { ComboBox, IComboBox, IComboBoxOption, Label, MessageBar, MessageBarType, Spinner, Stack } from '@fluentui/react';
+
+
+function calculateDistance(fromLocation: string | null, toLocation: string | null, pois: IPoI[]): number | null {
+  if (fromLocation === null || toLocation === null || pois.length === 0) {
+    return null;
+  }
+  if (fromLocation === toLocation) {
+    return 0;
+  }
+  return Math.floor(Math.random() * 100);
+}
 
 function App() {
-  const [pois, setPois] = useState<{ key: string, text: string }[]>([]);
+  const [pois, setPois] = useState<IPoI[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [fromOptions, setFromOptions] = useState<{ key: string, text: string }[]>([]);
+  const [toOptions, setToOptions] = useState<{ key: string, text: string }[]>([]);
+  const [fromLocation, setFromLocation] = useState<string | null>(null);
+  const [toLocation, setToLocation] = useState<string | null>(null);
 
   useEffect(() => {
     const loadPoIData = async () => {
@@ -14,7 +29,9 @@ function App() {
         const pois = await (new PoIService()).getPoIs();
         const options = pois.map(poi => ({ key: poi.id, text: poi.name }));
 
-        setPois(options);
+        setPois(pois);
+        setFromOptions(options);
+        setToOptions(options);
       } catch (error) {
         if (error instanceof Error && error.message) {
           setError(error.message);
@@ -29,22 +46,56 @@ function App() {
     loadPoIData();
   }, []);
 
+  const fromOnChange = React.useCallback(
+    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string): void => {
+      setFromLocation(option?.key?.toString() || null);
+    },
+    []
+  );
+  const toOnChange = React.useCallback(
+    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string): void => {
+      setToLocation(option?.key?.toString() || null);
+    },
+    []
+  );
+
+  const distance = calculateDistance(fromLocation, toLocation, pois);
   return (
     <>
-        {isLoading && <Spinner label="Loading..." />}
-        {error &&
-          <MessageBar
-            messageBarType={MessageBarType.error}>
-            {error}
-          </MessageBar>}
-        {!isLoading && 
+      {isLoading && <Spinner label="Loading..." />}
+      {error &&
+        <MessageBar
+          messageBarType={MessageBarType.error}>
+          {error}
+        </MessageBar>}
+      {!isLoading &&
+        <Stack
+          horizontal
+          tokens={{ childrenGap: 25 }}
+        >
           <ComboBox
             label="Coming from:"
-            options={pois}
+            options={fromOptions}
+            selectedKey={fromLocation}
+            onChange={fromOnChange}
             allowFreeInput
-            autoComplete="on" />}
+            autoComplete="on" />
+          <Stack styles={{ root: { alignItems: "center" } }}>
+            <Label>Distance (in hexes)</Label>
+            <Label>{distance}</Label>
+          </Stack>
+          <ComboBox
+            label="Going to:"
+            options={toOptions}
+            selectedKey={toLocation}
+            onChange={toOnChange}
+            allowFreeInput
+            autoComplete="on" />
+        </Stack>
+      }
     </>
   );
 }
 
 export default App;
+

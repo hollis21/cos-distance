@@ -1,6 +1,6 @@
 export class PoIService {
     baseUrl: string = "/";
-    async getPoIs(): Promise<{ id: string, name: string }[]> {
+    async getPoIs(): Promise<IPoI[]> {
         if (process.env.REACT_APP_MOCK_DATA === "true") {
             return [
                 { id: "GatesOfBarovia1", name: "Gates of Barovia" },
@@ -17,4 +17,9 @@ export class PoIService {
         }
         return await response.json();
     }
+}
+export interface IPoI {
+    id: string,
+    name: string,
+    edges?: {id:string, distance: number}[]
 }
