@@ -20,6 +20,7 @@
   },
   "scripts": {
     "start": "cross-env BROWSER=none react-scripts start",
+    "local": "cross-env BROWSER=none REACT_APP_MOCK_DATA=true react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
