@@ -2,17 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import { IPoI, PoIService } from './services/poi.service';
 import { ComboBox, IComboBox, IComboBoxOption, Label, MessageBar, MessageBarType, Spinner, Stack } from '@fluentui/react';
-
-
-function calculateDistance(fromLocation: string | null, toLocation: string | null, pois: IPoI[]): number | null {
-  if (fromLocation === null || toLocation === null || pois.length === 0) {
-    return null;
-  }
-  if (fromLocation === toLocation) {
-    return 0;
-  }
-  return Math.floor(Math.random() * 100);
-}
+import { calculateDistance } from './helpers/distanceCalculator';
 
 function App() {
   const [pois, setPois] = useState<IPoI[]>([]);

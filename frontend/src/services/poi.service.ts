@@ -1,25 +1,25 @@
 export class PoIService {
-    baseUrl: string = "/";
-    async getPoIs(): Promise<IPoI[]> {
-        if (process.env.REACT_APP_MOCK_DATA === "true") {
-            return [
-                { id: "GatesOfBarovia1", name: "Gates of Barovia" },
-                { id: "VillageOfBarovia", name: "Village of Barovia" },
-                { id: "IvlisCrossroads", name: "Ivlis Crossroads" }
-            ];
-        }
-        let response = await fetch("/api/poi");
-        if (response.status === 404) {
-            return [];
-        }
-        if (response.status !== 200) {
-            throw new Error("Error retrieving PoIs");
-        }
-        return await response.json();
+  baseUrl: string = "/";
+  async getPoIs(): Promise<IPoI[]> {
+    if (process.env.REACT_APP_MOCK_DATA === "true") {
+      return [
+        { id: "GatesOfBarovia1", name: "Gates of Barovia" },
+        { id: "VillageOfBarovia", name: "Village of Barovia" },
+        { id: "IvlisCrossroads", name: "Ivlis Crossroads" }
+      ];
     }
+    let response = await fetch("/api/poi");
+    if (response.status === 404) {
+      return [];
+    }
+    if (response.status !== 200) {
+      throw new Error("Error retrieving PoIs");
+    }
+    return await response.json();
+  }
 }
 export interface IPoI {
-    id: string,
-    name: string,
-    edges?: {id:string, distance: number}[]
+  id: string,
+  name: string,
+  edges?: { poIID: string, distance: number }[]
 }
