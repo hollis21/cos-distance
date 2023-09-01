@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace cos_distance.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class PoIController : ControllerBase
 {
     private readonly ILogger<PoIController> logger;

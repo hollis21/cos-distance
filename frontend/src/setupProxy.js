@@ -20,7 +20,7 @@ module.exports = function (app) {
     headers: {
       Connection: 'Keep-Alive'
     },
-    pathRewrite: { '^/api': '' }
+    pathRewrite: { '^/api': '/api' }
   });
 
   app.use('/api', appProxy);
