@@ -15,15 +15,60 @@ for (let i = 0; i < 6; i++) {
     });
 }
 
+const draw = (context: CanvasRenderingContext2D, hexs: IGridHex[], hexMapOptions: IHexMapOptions): void => {
+
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+
+    for (const hex of hexs) {
+        drawHex(context, hex, hexMapOptions);
+    }
+}
+
+const drawHex = (ctx: CanvasRenderingContext2D, hex: IGridHex, hexMapOptions: IHexMapOptions): void => {
+    const centerPoint = gridPositionToCenterPoint(hex.x, hex.y, hexMapOptions);
+    ctx.save();
+    ctx.strokeStyle = "#000000";
+    ctx.beginPath();
+    ctx.fillStyle = hex.color || "rgba(0,0,0,0)";
+    const hexPoints = hexMapOptions.orientation === "flattop" ? hexPointsFlat : hexPointsPointy;
+    ctx.moveTo(hexPoints[0].relX * hexMapOptions.hexSize + centerPoint.x, hexPoints[0].relY * hexMapOptions.hexSize + centerPoint.y);
+    for (let i = 1; i < 6; i++) {
+        ctx.lineTo(hexPoints[i].relX * hexMapOptions.hexSize + centerPoint.x, hexPoints[i].relY * hexMapOptions.hexSize + centerPoint.y)
+    }
+    ctx.closePath();
+    if (hex.color !== null) {
+        ctx.fill();
+    }
+    ctx.stroke();
+    ctx.restore();
+}
+
+const gridPositionToCenterPoint = (gridX: number, gridY: number, hexMapOptions: IHexMapOptions): { x: number, y: number } => {
+    const result = { x: 0, y: 0 };
+    const sqrt3 = Math.sqrt(3);
+    const size = hexMapOptions.hexSize;
+    if (hexMapOptions.orientation === "flattop") {
+        result.x = gridX * 1.5 * size + size;
+        result.y = gridY * sqrt3 * size + sqrt3 * size;
+        if ((hexMapOptions.offset === "even" && gridX % 2 === 0)
+            || (hexMapOptions.offset === "odd" && gridX % 2 === 1)) {
+            result.y += (sqrt3 * size / 2);
+        }
+    } else {
+        result.x = gridX * sqrt3 * size + sqrt3 * size;
+        result.y = gridY * 1.5 * size + size;
+        if ((hexMapOptions.offset === "even" && gridY % 2 === 0)
+            || (hexMapOptions.offset === "odd" && gridY % 2 === 1)) {
+            result.x += (sqrt3 * size / 2);
+        }
+    }
+    return result;
+}
+
 type IHexMapProps = Partial<IHexMapOptions> & { hexs?: IGridHex[] }
 
 const HexMap: React.FC<IHexMapProps> = (props: IHexMapProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const hexMapOptions: IHexMapOptions = {
-        hexSize: props.hexSize || 25,
-        offset: props.offset || "odd",
-        orientation: props.orientation || "flattop"
-    };
 
     let initialHexs: IGridHex[] = [];
     for (let x = 0; x < 20; x++) {
@@ -35,57 +80,8 @@ const HexMap: React.FC<IHexMapProps> = (props: IHexMapProps) => {
             });
         }
     }
-    const [hexs, setHexs] = useState<IGridHex[]>(props.hexs || initialHexs);
+    const [hexs] = useState<IGridHex[]>(props.hexs || initialHexs);
 
-    const draw = (context: CanvasRenderingContext2D, hexs: IGridHex[]): void => {
-
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-
-        for (const hex of hexs) {
-            drawHex(context, hex, hexMapOptions);
-        }
-    }
-
-    const drawHex = (ctx: CanvasRenderingContext2D, hex: IGridHex, hexMapOptions: IHexMapOptions): void => {
-        const centerPoint = gridPositionToCenterPoint(hex.x, hex.y, hexMapOptions);
-        ctx.save();
-        ctx.strokeStyle = "#000000";
-        ctx.beginPath();
-        ctx.fillStyle = hex.color || "rgba(0,0,0,0)";
-        const hexPoints = hexMapOptions.orientation === "flattop" ? hexPointsFlat : hexPointsPointy;
-        ctx.moveTo(hexPoints[0].relX * hexMapOptions.hexSize + centerPoint.x, hexPoints[0].relY * hexMapOptions.hexSize + centerPoint.y);
-        for (let i = 1; i < 6; i++) {
-            ctx.lineTo(hexPoints[i].relX * hexMapOptions.hexSize + centerPoint.x, hexPoints[i].relY * hexMapOptions.hexSize + centerPoint.y)
-        }
-        ctx.closePath();
-        if (hex.color !== null) {
-            ctx.fill();
-        }
-        ctx.stroke();
-        ctx.restore();
-    }
-
-    const gridPositionToCenterPoint = (gridX: number, gridY: number, hexMapOptions: IHexMapOptions): { x: number, y: number } => {
-        const result = { x: 0, y: 0 };
-        const sqrt3 = Math.sqrt(3);
-        const size = hexMapOptions.hexSize;
-        if (hexMapOptions.orientation === "flattop") {
-            result.x = gridX * 1.5 * size + size;
-            result.y = gridY * sqrt3 * size + sqrt3 * size;
-            if ((hexMapOptions.offset === "even" && gridX % 2 === 0)
-                || (hexMapOptions.offset === "odd" && gridX % 2 === 1)) {
-                result.y += (sqrt3 * size / 2);
-            }
-        } else {
-            result.x = gridX * sqrt3 * size + sqrt3 * size;
-            result.y = gridY * 1.5 * size + size;
-            if ((hexMapOptions.offset === "even" && gridY % 2 === 0)
-                || (hexMapOptions.offset === "odd" && gridY % 2 === 1)) {
-                result.x += (sqrt3 * size / 2);
-            }
-        }
-        return result;
-    }
 
     useEffect(() => {
         if (canvasRef.current === null) {
@@ -93,8 +89,13 @@ const HexMap: React.FC<IHexMapProps> = (props: IHexMapProps) => {
         }
         const canvas: HTMLCanvasElement = canvasRef.current;
         const context: CanvasRenderingContext2D = canvas.getContext("2d")!;
+        const hexMapOptions: IHexMapOptions = {
+            hexSize: props.hexSize || 25,
+            offset: props.offset || "odd",
+            orientation: props.orientation || "flattop"
+        };
 
-        draw(context, hexs);
+        draw(context, hexs, hexMapOptions);
     }, [hexs, props]);
 
     return <div>
